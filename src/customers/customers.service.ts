@@ -8,18 +8,18 @@ import { Customer, CustomerDocument } from './model/customer.schema';
 @Injectable()
 export class CustomersService {
   constructor(
-    @InjectModel(Customer.name) private customersModel: Model<CustomerDocument>,
+    @InjectModel(Customer.name) private customerModel: Model<CustomerDocument>,
   ) {}
 
   async getCustomers(): Promise<CustomerDocument[]> {
-    return await this.customersModel.find({ disabled: null });
+    return await this.customerModel.find({ disabled: null }).sort('name');
   }
 
   async getCustomerById(id: Types.ObjectId): Promise<CustomerDocument> {
     if (!Types.ObjectId.isValid(id)) {
       throw new BadRequestException(`ID "${id}" inválido`);
     }
-    const found = await this.customersModel.findOne({ _id: id, disabled: null });
+    const found = await this.customerModel.findOne({ _id: id, disabled: null });
 
     if (!found) {
       throw new NotFoundException(`Cliente com ID "${id}" não encontrado`);
@@ -27,13 +27,13 @@ export class CustomersService {
     return found;
   }
 
-  async createCustomer(createCustomerDTO: CreateCustomerDTO): Promise<void> {
+  async createCustomer(createCustomerDTO: CreateCustomerDTO): Promise<CustomerDocument> {
     const { name, doc, email, contact } = createCustomerDTO;
 
-    const newCustomer = new this.customersModel({ name, doc, email, contact });
+    const newCustomer = new this.customerModel({ name, doc, email, contact });
 
     try {
-      await newCustomer.save();
+      return await newCustomer.save();
 
     } catch (error) {
       console.log(error);
@@ -44,7 +44,7 @@ export class CustomersService {
   async updateCustomer(
     mongoIdDTO: MongoIdDTO,
     updateCustomerDTO: UpdateCustomerDTO,
-  ): Promise<void> {
+  ): Promise<CustomerDocument> {
     const { name, doc, email, contact, disabled } = updateCustomerDTO;
     const foundCustomer = await this.getCustomerById(mongoIdDTO.id);
 
@@ -55,14 +55,13 @@ export class CustomersService {
     foundCustomer.disabled = disabled ? new Date() : null;
 
     try {
-      await foundCustomer.save();
+      return await foundCustomer.save();
 
     } catch (error) {
       console.log(error);
       throw new InternalServerErrorException('Erro ao atualizar Cliente. Por favor, tente novamente mais tarde');
     }
   }
-
 
   async disableCustomer(mongoIdDTO: MongoIdDTO): Promise<void> {
     const foundCustomer = await this.getCustomerById(mongoIdDTO.id);

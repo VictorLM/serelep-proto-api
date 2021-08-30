@@ -10,20 +10,15 @@ import { User, UserDocument } from './model/user.schema';
 @Injectable()
 export class UsersService {
   constructor(
-    @InjectModel(User.name) private usersModel: Model<UserDocument>,
+    @InjectModel(User.name) private userModel: Model<UserDocument>,
   ) {}
 
   async getUserById(id: Types.ObjectId): Promise<UserDocument> {
     if (!Types.ObjectId.isValid(id)) {
-      throw new BadRequestException(`ID de usuário "${id}" inválido`);
+      throw new BadRequestException(`ID "${id}" inválido`);
     }
-    const found = await this.usersModel
-      .findOne({
-        _id: id,
-        inactivated: null,
-      })
-      .select('-roles')
-      .exec();
+
+    const found = await this.userModel.findOne({_id: id, disabled: null});
 
     if (!found) {
       throw new NotFoundException(`Usuário com ID "${id}" não encontrado`);
@@ -32,7 +27,7 @@ export class UsersService {
   }
 
   async getUserByEmail(email: string): Promise<UserDocument> {
-    return await this.usersModel.findOne({email});
+    return await this.userModel.findOne({email});
   }
 
 }

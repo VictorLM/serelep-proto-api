@@ -21,7 +21,7 @@ export class CustomersController {
   }
 
   @Post('/')
-  createCustomer(@Body() createCustomerDTO: CreateCustomerDTO): Promise<void> {
+  createCustomer(@Body() createCustomerDTO: CreateCustomerDTO): Promise<CustomerDocument> {
     return this.customersService.createCustomer(createCustomerDTO);
   }
 
@@ -29,7 +29,7 @@ export class CustomersController {
   updateCustomer(
     @Param() mongoIdDTO: MongoIdDTO,
     @Body() updateCustomerDTO: UpdateCustomerDTO
-  ): Promise<void> {
+  ): Promise<CustomerDocument> {
     return this.customersService.updateCustomer(mongoIdDTO, updateCustomerDTO);
   }
 
