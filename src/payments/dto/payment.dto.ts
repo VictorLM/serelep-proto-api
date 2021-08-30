@@ -32,3 +32,9 @@ export class PaymentsDTO {
   @Type(() => PaymentDTO)
   readonly payments: PaymentDTO[];
 }
+
+export class UpdatePaymentDTO extends PaymentDTO {
+  @IsOptional()
+  @IsDateString({}, { message: 'Pago deve ser uma data válida' })
+  readonly payed: string;
+}

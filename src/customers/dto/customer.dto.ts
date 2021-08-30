@@ -37,5 +37,5 @@ export class CreateCustomerDTO {
 export class UpdateCustomerDTO extends CreateCustomerDTO {
   @IsOptional()
   @IsBoolean({ message: 'Desativar inválido'})
-  readonly disabled: Date;
+  readonly disabled: boolean;
 }
