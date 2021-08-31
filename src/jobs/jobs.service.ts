@@ -1,15 +1,20 @@
 import {
   BadRequestException,
+  forwardRef,
+  Inject,
   Injectable,
   InternalServerErrorException,
-  NotFoundException
+  NotFoundException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
+import { BillsService } from '../bills/bills.service';
 import { CustomersService } from '../customers/customers.service';
 import { MongoIdDTO } from '../globals/dto/mongoId.dto';
 import { PaymentsService } from '../payments/payments.service';
+import { CreateJobNoteDTO } from './dto/create-job-notes.dto';
 import { CreateJobDTO, NewJobDTO, UpdateJobDTO } from './dto/job.dto';
+import { JobNote } from './interface/job-note.interface';
 import { Job, JobDocument } from './model/job.schema';
 
 @Injectable()
@@ -18,6 +23,8 @@ export class JobsService {
     @InjectModel(Job.name) private jobModel: Model<JobDocument>,
     private paymentsService: PaymentsService,
     private customersService: CustomersService,
+    @Inject(forwardRef(() => BillsService))
+    private billsService: BillsService, // TODO
   ) {}
 
   async getJobs(): Promise<JobDocument[]> {
@@ -37,11 +44,11 @@ export class JobsService {
   }
 
   async newJob(newJobDTO: NewJobDTO): Promise<JobDocument> {
-    const { name, customer, type, notes, payments } = newJobDTO;
+    const { name, customer, type, description, payments } = newJobDTO;
 
     await this.customersService.getCustomerById(customer);
 
-    const newJob = await this.createJob({ name, customer, type, notes });
+    const newJob = await this.createJob({ name, customer, type, description });
     const newPayments = await this.paymentsService.createPayments(payments, newJob._id);
     newJob.payments = newPayments;
 
@@ -55,8 +62,8 @@ export class JobsService {
   }
 
   async createJob(createJobDTO: CreateJobDTO): Promise<JobDocument> {
-    const { name, customer, type, notes } = createJobDTO;
-    const newJob = new this.jobModel({ name, customer, type, notes });
+    const { name, customer, type, description } = createJobDTO;
+    const newJob = new this.jobModel({ name, customer, type, description });
 
     try {
       return await newJob.save();
@@ -67,11 +74,33 @@ export class JobsService {
     }
   }
 
+  async createJobNote(
+    mongoIdDTO: MongoIdDTO,
+    createJobNoteDTO: CreateJobNoteDTO,
+  ): Promise<JobNote> {
+    const foundJob = await this.getJobById(mongoIdDTO.id);
+    const note: JobNote = {
+      note: createJobNoteDTO.note,
+      createdAt: new Date(Date.now()),
+    };
+
+    foundJob.notes.push(note);
+
+    try {
+      await foundJob.save();
+      return note;
+
+    } catch (error) {
+      console.log(error);
+      throw new InternalServerErrorException('Erro ao criar Anotação. Por favor, tente novamente mais tarde');
+    }
+  }
+
   async updateJob(
     mongoIdDTO: MongoIdDTO,
     updateJobDTO: UpdateJobDTO,
   ): Promise<JobDocument> {
-    const { name, customer, type, notes, status } = updateJobDTO;
+    const { name, customer, type, description, status } = updateJobDTO;
     const foundJob = await this.getJobById(mongoIdDTO.id);
 
     if(foundJob.customer._id !== customer) {
@@ -81,7 +110,7 @@ export class JobsService {
 
     foundJob.name = name;
     foundJob.type = type;
-    foundJob.notes = notes;
+    foundJob.description = description;
     foundJob.status = status ? status : foundJob.status;
 
     try {

@@ -31,8 +31,8 @@ export class NewJobDTO extends PaymentsDTO {
   readonly customer: Types.ObjectId;
 
   @IsOptional()
-  @IsString({ message: 'Anotações inválidas' })
-  readonly notes: string;
+  @IsString({ message: 'Descrição inválida' })
+  readonly description: string;
 }
 
 export class CreateJobDTO {
@@ -53,8 +53,8 @@ export class CreateJobDTO {
   readonly customer: Types.ObjectId;
 
   @IsOptional()
-  @IsString({ message: 'Anotações inválidas' })
-  readonly notes: string;
+  @IsString({ message: 'Descrição inválida' })
+  readonly description: string;
 }
 
 export class UpdateJobDTO extends CreateJobDTO {

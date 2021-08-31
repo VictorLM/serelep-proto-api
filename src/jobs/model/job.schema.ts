@@ -3,6 +3,7 @@ import * as mongoose from 'mongoose';
 import { CustomerDocument } from '../../customers/model/customer.schema';
 import { PaymentDocument } from '../../payments/model/payment.schema';
 import { JobStatus } from '../enum/job-status.enum';
+import { JobNote } from '../interface/job-note.interface';
 
 export type JobDocument = Job & mongoose.Document;
 
@@ -38,7 +39,13 @@ export class Job {
   payments: PaymentDocument[];
 
   @Prop({ required: false, default: null })
-  notes: string;
+  description: string;
+
+  @Prop({
+    required: false,
+    default: [],
+  })
+  notes: JobNote[];
 }
 
 export const JobSchema = SchemaFactory.createForClass(Job);

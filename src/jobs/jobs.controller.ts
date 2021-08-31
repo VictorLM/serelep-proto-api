@@ -1,7 +1,9 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post, UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { MongoIdDTO } from '../globals/dto/mongoId.dto';
+import { CreateJobNoteDTO } from './dto/create-job-notes.dto';
 import { NewJobDTO, UpdateJobDTO } from './dto/job.dto';
+import { JobNote } from './interface/job-note.interface';
 import { JobsService } from './jobs.service';
 import { JobDocument } from './model/job.schema';
 
@@ -23,6 +25,14 @@ export class JobsController {
   @Post('/')
   createJob(@Body() newJobDTO: NewJobDTO): Promise<JobDocument> {
     return this.jobsService.newJob(newJobDTO);
+  }
+
+  @Post('/:id/notes')
+  createJobNote(
+    @Param() mongoIdDTO: MongoIdDTO,
+    @Body() createJobNoteDTO: CreateJobNoteDTO,
+  ): Promise<JobNote> {
+    return this.jobsService.createJobNote(mongoIdDTO, createJobNoteDTO);
   }
 
   @Patch('/:id')

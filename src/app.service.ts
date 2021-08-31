@@ -5,4 +5,6 @@ export class AppService {
   getHello(): string {
     return 'Hello World! Serelep - Prototype';
   }
+
+  // TODO - QUERYS PARA DASHBOARD
 }
