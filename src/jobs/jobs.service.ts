@@ -14,6 +14,8 @@ import { MongoIdDTO } from '../globals/dto/mongoId.dto';
 import { PaymentsService } from '../payments/payments.service';
 import { CreateJobNoteDTO } from './dto/create-job-notes.dto';
 import { CreateJobDTO, NewJobDTO, UpdateJobDTO } from './dto/job.dto';
+import { JobsQueryDTO } from './dto/jobs-query.dto';
+import { JobStatus } from './enum/job-status.enum';
 import { JobNote } from './interface/job-note.interface';
 import { Job, JobDocument } from './model/job.schema';
 
@@ -27,8 +29,29 @@ export class JobsService {
     private billsService: BillsService, // TODO
   ) {}
 
-  async getJobs(): Promise<JobDocument[]> {
-    return await this.jobModel.find().populate('customer payments').sort('-createdAt');
+  async getJobs(jobsQueryDTO: JobsQueryDTO): Promise<JobDocument[]> {
+    const { status, types, search, orderBy } = jobsQueryDTO || {};
+    const query = this.jobModel.find().populate('customer payments');
+
+    if (status) {
+      query.where('status', JobStatus[status]);
+    }
+
+    if (types) {
+      query.where({ types: { $in: types }});
+    }
+
+    if (search) {
+      query.where({ name: { $regex: '.*' + search + '.*' } });
+    }
+
+    if (orderBy && orderBy === 'DESC') {
+      query.sort({ createdAt: -1 });
+    } else {
+      query.sort({ createdAt: -1 });
+    }
+
+    return await query.exec();
   }
 
   async getJobById(id: Types.ObjectId): Promise<JobDocument> {
@@ -44,11 +67,11 @@ export class JobsService {
   }
 
   async newJob(newJobDTO: NewJobDTO): Promise<JobDocument> {
-    const { name, customer, type, description, payments } = newJobDTO;
+    const { name, customer, types, description, payments } = newJobDTO;
 
     await this.customersService.getCustomerById(customer);
 
-    const newJob = await this.createJob({ name, customer, type, description });
+    const newJob = await this.createJob({ name, customer, types, description });
     const newPayments = await this.paymentsService.createPayments(payments, newJob._id);
     newJob.payments = newPayments;
 
@@ -62,8 +85,8 @@ export class JobsService {
   }
 
   async createJob(createJobDTO: CreateJobDTO): Promise<JobDocument> {
-    const { name, customer, type, description } = createJobDTO;
-    const newJob = new this.jobModel({ name, customer, type, description });
+    const { name, customer, types, description } = createJobDTO;
+    const newJob = new this.jobModel({ name, customer, types, description });
 
     try {
       return await newJob.save();
@@ -100,7 +123,7 @@ export class JobsService {
     mongoIdDTO: MongoIdDTO,
     updateJobDTO: UpdateJobDTO,
   ): Promise<JobDocument> {
-    const { name, customer, type, description, status } = updateJobDTO;
+    const { name, customer, types, description, status } = updateJobDTO;
     const foundJob = await this.getJobById(mongoIdDTO.id);
 
     if(foundJob.customer._id !== customer) {
@@ -109,7 +132,7 @@ export class JobsService {
     }
 
     foundJob.name = name;
-    foundJob.type = type;
+    foundJob.types = types;
     foundJob.description = description;
     foundJob.status = status ? status : foundJob.status;
 

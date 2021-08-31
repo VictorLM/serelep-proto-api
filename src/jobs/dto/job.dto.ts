@@ -12,6 +12,7 @@ import {
 import { Types } from 'mongoose';
 import { PaymentsDTO } from '../../payments/dto/payment.dto';
 import { JobStatus } from '../enum/job-status.enum';
+import { JobTypes } from '../enum/job-types.enum';
 
 export class NewJobDTO extends PaymentsDTO {
   @IsNotEmpty({ message: 'Nome é obrigatório' })
@@ -24,7 +25,7 @@ export class NewJobDTO extends PaymentsDTO {
   @IsNotEmpty({ message: 'Tipo é obrigatório' })
   @IsArray({ message: 'Tipo inválido' })
   @ArrayMinSize(1, { message: 'É necessário selecionar ao menos um Tipo' })
-  readonly type: string[];
+  readonly types: JobTypes[];
 
   @IsNotEmpty({ message: 'Cliente é obrigatório' })
   @IsMongoId({ message: 'Cliente inválido' })
@@ -46,7 +47,7 @@ export class CreateJobDTO {
   @IsNotEmpty({ message: 'Tipo é obrigatório' })
   @IsArray({ message: 'Tipo inválido' })
   @ArrayMinSize(1, { message: 'É necessário selecionar ao menos um Tipo' })
-  readonly type: string[];
+  readonly types: string[];
 
   @IsNotEmpty({ message: 'Cliente é obrigatório' })
   @IsMongoId({ message: 'Cliente inválido' })

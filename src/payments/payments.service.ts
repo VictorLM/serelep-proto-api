@@ -4,6 +4,7 @@ import { Model, Types } from 'mongoose';
 import { MongoIdDTO } from '../globals/dto/mongoId.dto';
 import { JobDocument } from '../jobs/model/job.schema';
 import { PaymentDTO, UpdatePaymentDTO } from './dto/payment.dto';
+import { PaymentsQueryDTO } from './dto/payments-query.dto';
 import { Payment, PaymentDocument } from './model/payment.schema';
 
 @Injectable()
@@ -12,8 +13,30 @@ export class PaymentsService {
     @InjectModel(Payment.name) private paymentModel: Model<PaymentDocument>,
   ) {}
 
-  async getPayments(): Promise<PaymentDocument[]> {
-    return await this.paymentModel.find().populate('job').sort('-dueDate');
+  async getPayments(paymentsQueryDTO: PaymentsQueryDTO): Promise<PaymentDocument[]> {
+    const { overdue, payed, search, orderBy } = paymentsQueryDTO || {};
+    const query = this.paymentModel.find().populate('job');
+
+    if (overdue) {
+      query.where({
+        dueDate: { $lt: new Date(Date.now()) }
+      });
+      query.where({ payed: null });
+    } else if(payed) {
+      query.where({ payed: { $ne: null } });
+    }
+
+    if (search) {
+      query.where({ notes: { $regex: '.*' + search + '.*' } });
+    }
+
+    if (orderBy && orderBy === 'DESC') {
+      query.sort({ createdAt: -1 });
+    } else {
+      query.sort({ createdAt: -1 });
+    }
+
+    return await query.exec();
   }
 
   async getPaymentById(id: Types.ObjectId): Promise<PaymentDocument> {

@@ -1,8 +1,20 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Query,
+  UseGuards,
+  ValidationPipe,
+} from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { MongoIdDTO } from '../globals/dto/mongoId.dto';
 import { CreateJobNoteDTO } from './dto/create-job-notes.dto';
 import { NewJobDTO, UpdateJobDTO } from './dto/job.dto';
+import { JobsQueryDTO } from './dto/jobs-query.dto';
 import { JobNote } from './interface/job-note.interface';
 import { JobsService } from './jobs.service';
 import { JobDocument } from './model/job.schema';
@@ -13,8 +25,10 @@ export class JobsController {
   constructor(private jobsService: JobsService) {}
 
   @Get('/')
-  getJobs(): Promise<JobDocument[]> {
-    return this.jobsService.getJobs();
+  getJobs(
+    @Query(new ValidationPipe({ transform: true })) jobsQueryDTO: JobsQueryDTO,
+  ): Promise<JobDocument[]> {
+    return this.jobsService.getJobs(jobsQueryDTO);
   }
 
   @Get('/:id')

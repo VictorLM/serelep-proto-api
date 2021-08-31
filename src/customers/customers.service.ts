@@ -2,6 +2,7 @@ import { BadRequestException, Injectable, InternalServerErrorException, NotFound
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { MongoIdDTO } from '../globals/dto/mongoId.dto';
+import { QueryDTO } from '../globals/dto/query.dto';
 import { CreateCustomerDTO, UpdateCustomerDTO } from './dto/customer.dto';
 import { Customer, CustomerDocument } from './model/customer.schema';
 
@@ -11,8 +12,22 @@ export class CustomersService {
     @InjectModel(Customer.name) private customerModel: Model<CustomerDocument>,
   ) {}
 
-  async getCustomers(): Promise<CustomerDocument[]> {
-    return await this.customerModel.find({ disabled: null }).sort('name');
+  async getCustomers(queryDTO: QueryDTO): Promise<CustomerDocument[]> {
+    const { search, orderBy } = queryDTO || {};
+
+    const query = this.customerModel.find({ disabled: null });
+
+    if (search) {
+      query.where({ name: { $regex: '.*' + search + '.*' } });
+    }
+
+    if (orderBy && orderBy === 'DESC') {
+      query.sort({ createdAt: -1 });
+    } else {
+      query.sort({ createdAt: 1 });
+    }
+
+    return await query.exec();
   }
 
   async getCustomerById(id: Types.ObjectId): Promise<CustomerDocument> {

@@ -49,9 +49,9 @@ export class BillsService {
     }
 
     if (orderBy && orderBy === 'DESC') {
-      query.sort('-1');
+      query.sort({ createdAt: -1 });
     } else {
-      query.sort('1');
+      query.sort({ createdAt: -1 });
     }
 
     return await query.exec();
@@ -70,7 +70,7 @@ export class BillsService {
   }
 
   async createBill(billDTO: BillDTO): Promise<BillDocument> {
-    const { name, type, subType, value, dueDate, job, notes } = billDTO;
+    const { name, type, subType, value, job, notes } = billDTO;
 
     if(job) {
       await this.jobsService.getJobById(job);
@@ -81,7 +81,6 @@ export class BillsService {
       type,
       subType,
       value,
-      dueDate,
       job,
       notes,
     });
@@ -101,7 +100,7 @@ export class BillsService {
     mongoIdDTO: MongoIdDTO,
     updateBillDTO: UpdateBillDTO,
   ): Promise<BillDocument> {
-    const { name, type, subType, value, dueDate, job, notes, payed } = updateBillDTO;
+    const { name, type, subType, value, job, notes, payed } = updateBillDTO;
     const foundBill = await this.getBillById(mongoIdDTO.id);
 
     if(job && foundBill.job._id !== job) {
@@ -113,7 +112,7 @@ export class BillsService {
     foundBill.type = BillTypes[type];
     foundBill.subType = BillSubTypes[subType];
     foundBill.value = value;
-    foundBill.dueDate = new Date(dueDate);
+    // foundBill.dueDate = new Date(dueDate);
     foundBill.notes = notes;
     foundBill.payed = payed ? new Date(payed) : null;
 

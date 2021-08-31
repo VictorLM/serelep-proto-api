@@ -1,6 +1,7 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { MongoIdDTO } from '../globals/dto/mongoId.dto';
+import { QueryDTO } from '../globals/dto/query.dto';
 import { CustomersService } from './customers.service';
 import { CreateCustomerDTO, UpdateCustomerDTO } from './dto/customer.dto';
 import { CustomerDocument } from './model/customer.schema';
@@ -11,8 +12,8 @@ export class CustomersController {
   constructor(private customersService: CustomersService) {}
 
   @Get('/')
-  getCustomers(): Promise<CustomerDocument[]> {
-    return this.customersService.getCustomers();
+  getCustomers(@Query() queryDTO: QueryDTO): Promise<CustomerDocument[]> {
+    return this.customersService.getCustomers(queryDTO);
   }
 
   @Get('/:id')

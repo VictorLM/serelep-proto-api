@@ -13,7 +13,7 @@ export class Job {
   name: string;
 
   @Prop({ required: true })
-  type: string[];
+  types: string[];
 
   @Prop({
     enum: JobStatus,

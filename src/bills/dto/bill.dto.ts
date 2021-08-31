@@ -28,9 +28,9 @@ export class BillDTO {
   @IsPositive({ message: 'Valor deve ser um número positivo' })
   readonly value: number;
 
-  @IsNotEmpty({ message: 'Vencimento é obrigatório' })
-  @IsDateString({}, { message: 'Vencimento deve ser uma data válida' })
-  readonly dueDate: string;
+  // @IsNotEmpty({ message: 'Vencimento é obrigatório' })
+  // @IsDateString({}, { message: 'Vencimento deve ser uma data válida' })
+  // readonly dueDate: string;
 
   @IsOptional()
   @IsMongoId({ message: 'Job Inválido' })
