@@ -6,6 +6,7 @@ import { JobDocument } from '../jobs/model/job.schema';
 import { PaymentDTO, UpdatePaymentDTO } from './dto/payment.dto';
 import { PaymentsQueryDTO } from './dto/payments-query.dto';
 import { Payment, PaymentDocument } from './model/payment.schema';
+import { get } from 'lodash';
 
 @Injectable()
 export class PaymentsService {
@@ -49,6 +50,28 @@ export class PaymentsService {
       throw new NotFoundException(`Pagamento com ID "${id}" não encontrado`);
     }
     return found;
+  }
+
+  async getExpectedPaymentsAmount(month: number, year: number): Promise<number> {
+    const date = new Date(`${year}-${String(month).length < 2 ? '0' + month : month}-01`);
+    const minDueDate = new Date(`${year}-${String(month).length < 2 ? '0' + month : month}-01`);
+    const maxDueDatePlusOneDay = new Date(date.setMonth(minDueDate.getMonth() + 2, 0));
+
+    const expectedPayments = await this.paymentModel.aggregate([
+      {
+        $match: {
+           dueDate: {
+            $gte: minDueDate,
+            $lt: maxDueDatePlusOneDay,
+          },
+        },
+      },
+      { $group: { _id: null, total: { $sum: "$value" } } }
+    ]);
+
+    const amount: number = get(expectedPayments, '[0].total', 0);
+
+    return amount;
   }
 
   async createPayment(

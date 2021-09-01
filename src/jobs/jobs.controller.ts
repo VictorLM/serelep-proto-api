@@ -11,6 +11,7 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { BillDocument } from '../bills/model/bill.schema';
 import { MongoIdDTO } from '../globals/dto/mongoId.dto';
 import { CreateJobNoteDTO } from './dto/create-job-notes.dto';
 import { NewJobDTO, UpdateJobDTO } from './dto/job.dto';
@@ -32,8 +33,8 @@ export class JobsController {
   }
 
   @Get('/:id')
-  getJobById(@Param() mongoIdDTO: MongoIdDTO): Promise<JobDocument> {
-    return this.jobsService.getJobById(mongoIdDTO.id);
+  getJobByIdWithBills(@Param() mongoIdDTO: MongoIdDTO): Promise<{ job: JobDocument, bills: BillDocument[] }> {
+    return this.jobsService.getJobByIdWithBills(mongoIdDTO.id);
   }
 
   @Post('/')

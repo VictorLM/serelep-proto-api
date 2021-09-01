@@ -20,7 +20,7 @@ export class Bill {
   @Prop({ required: true })
   value: number;
 
-  @Prop({ required: false })
+  @Prop({ required: false, default: null })
   dueDate: Date;
 
   @Prop({

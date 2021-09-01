@@ -7,9 +7,11 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
+import { get } from 'lodash';
 import { Model, Types } from 'mongoose';
 import { MongoIdDTO } from '../globals/dto/mongoId.dto';
 import { JobsService } from '../jobs/jobs.service';
+import { JobDocument } from '../jobs/model/job.schema';
 import { BillDTO, UpdateBillDTO } from './dto/bill.dto';
 import { BillQueryDTO } from './dto/bills-query.dto';
 import { BillSubTypes } from './enum/bill-sub-types.enum';
@@ -69,19 +71,57 @@ export class BillsService {
     return found;
   }
 
-  async createBill(billDTO: BillDTO): Promise<BillDocument> {
-    const { name, type, subType, value, job, notes } = billDTO;
+  async getBillsByJob(job: JobDocument): Promise<BillDocument[]> {
+    return await this.billModel.find({ job });
+  }
 
-    if(job) {
+  async getExpectedBillsAmount(month: number, year: number): Promise<number> {
+    const date = new Date(`${year}-${String(month).length < 2 ? '0' + month : month}-01`);
+    const minDueDate = new Date(`${year}-${String(month).length < 2 ? '0' + month : month}-01`);
+    const maxDueDatePlusOneDay = new Date(date.setMonth(minDueDate.getMonth() + 2, 0));
+
+    const expectedFixedBills = await this.billModel.aggregate([
+      {
+        $match: {
+          type: BillTypes.FIXED,
+        },
+      },
+      { $group: { _id: null, total: { $sum: "$value" } } }
+    ]);
+
+    const expectedVariableBills = await this.billModel.aggregate([
+      {
+        $match: {
+          type: BillTypes.VARIABLE,
+          // payed: null, // SOLICTAÇÃO DO JOW ...
+          dueDate: {
+            $gte: minDueDate, // SOLICTAÇÃO DO JOW ...
+            $lt: maxDueDatePlusOneDay,
+          },
+        },
+      },
+      { $group: { _id: null, total: { $sum: "$value" } } }
+    ]);
+
+    const amount: number = Number(get(expectedFixedBills, '[0].total', 0)) + Number(get(expectedVariableBills, '[0].total', 0));
+
+    return amount;
+  }
+
+  async createBill(billDTO: BillDTO): Promise<BillDocument> {
+    const { name, type, subType, value, dueDate, job, notes } = billDTO;
+
+    if(type === BillTypes.VARIABLE && job) {
       await this.jobsService.getJobById(job);
     }
 
     const newBill = new this.billModel({
       name,
-      type,
-      subType,
+      type: BillTypes[type],
+      subType: BillSubTypes[subType],
       value,
-      job,
+      dueDate: type === BillTypes.VARIABLE ? new Date(dueDate) : null,
+      job: type === BillTypes.VARIABLE ? job : null,
       notes,
     });
 
@@ -100,19 +140,21 @@ export class BillsService {
     mongoIdDTO: MongoIdDTO,
     updateBillDTO: UpdateBillDTO,
   ): Promise<BillDocument> {
-    const { name, type, subType, value, job, notes, payed } = updateBillDTO;
+    const { name, type, subType, value, dueDate, job, notes, payed } = updateBillDTO;
     const foundBill = await this.getBillById(mongoIdDTO.id);
 
-    if(job && foundBill.job._id !== job) {
+    if(type === BillTypes.VARIABLE && job && foundBill.job._id !== job) {
       const foundJob = await this.jobsService.getJobById(job);
       foundBill.job = foundJob;
+    } else {
+      foundBill.job = null;
     }
 
     foundBill.name = name;
     foundBill.type = BillTypes[type];
     foundBill.subType = BillSubTypes[subType];
     foundBill.value = value;
-    // foundBill.dueDate = new Date(dueDate);
+    foundBill.dueDate = type === BillTypes.VARIABLE ? new Date(dueDate) : null,
     foundBill.notes = notes;
     foundBill.payed = payed ? new Date(payed) : null;
 
@@ -126,6 +168,9 @@ export class BillsService {
   }
 
   async deleteBill(mongoIdDTO: MongoIdDTO): Promise<void> {
+    // TODO - SE DELETAR FIXED BILL VAI FERRAR COM OS VALORES MESES PASSADOS
+    // TODO - Alterar para inserir um novo em caso de alteração, para manter o hitórico
+    // Ai pego o valor do mais novo para as novas projeções
     const foundBill = await this.getBillById(mongoIdDTO.id);
 
     try {

@@ -9,8 +9,10 @@ import {
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { BillsService } from '../bills/bills.service';
+import { BillDocument } from '../bills/model/bill.schema';
 import { CustomersService } from '../customers/customers.service';
 import { MongoIdDTO } from '../globals/dto/mongoId.dto';
+import { DashboardJobsData, JobsByStatus, JobsByType } from '../globals/interfaces/dashboard-data.interface';
 import { PaymentsService } from '../payments/payments.service';
 import { CreateJobNoteDTO } from './dto/create-job-notes.dto';
 import { CreateJobDTO, NewJobDTO, UpdateJobDTO } from './dto/job.dto';
@@ -26,7 +28,7 @@ export class JobsService {
     private paymentsService: PaymentsService,
     private customersService: CustomersService,
     @Inject(forwardRef(() => BillsService))
-    private billsService: BillsService, // TODO
+    private billsService: BillsService,
   ) {}
 
   async getJobs(jobsQueryDTO: JobsQueryDTO): Promise<JobDocument[]> {
@@ -63,7 +65,100 @@ export class JobsService {
     if (!found) {
       throw new NotFoundException(`Job com ID "${id}" não encontrado`);
     }
+
     return found;
+  }
+
+  async getJobByIdWithBills(
+    id: Types.ObjectId
+  ): Promise<{ job: JobDocument, bills: BillDocument[] }> {
+    if (!Types.ObjectId.isValid(id)) {
+      throw new BadRequestException(`ID "${id}" inválido`);
+    }
+    const foundJob = await this.jobModel.findById(id).populate('customer payments');
+
+    if (!foundJob) {
+      throw new NotFoundException(`Job com ID "${id}" não encontrado`);
+    }
+
+    const bills = await this.billsService.getBillsByJob(foundJob);
+
+    return { job: foundJob, bills };
+  }
+
+  async getJobsByPeriodCounts(month: number, year: number): Promise<DashboardJobsData> {
+    const date = new Date(`${year}-${String(month).length < 2 ? '0' + month : month}-01`);
+    const minDate = new Date(`${year}-${String(month).length < 2 ? '0' + month : month}-01`);
+    const maxDatePlusOneDay = new Date(date.setMonth(minDate.getMonth() + 2, 0));
+
+    const jobsByPeriodTypesCount = await this.jobModel.aggregate([
+      {
+        $match: {
+          createdAt: {
+            $gte: minDate,
+            $lt: maxDatePlusOneDay,
+          },
+        },
+      },
+      {
+        $unwind: "$types",
+      },
+      {
+        $group: {
+          _id: "$types",
+          count: { $sum: 1 },
+        }
+      },
+    ]);
+
+    const jobsByPeriodStatusCount = await this.jobModel.aggregate([
+      {
+        $match: {
+          createdAt: {
+            $gte: minDate,
+            $lt: maxDatePlusOneDay,
+          },
+        },
+      },
+      {
+        $group: {
+          _id: "$status",
+          count: { $sum: 1 },
+        }
+      },
+    ]);
+
+    const byType: JobsByType = {
+      'VISUAL_IDENTITY': 0,
+      'BRAND_DESIGN': 0,
+      'PACKAGING_DESIGN': 0,
+      'NAMING': 0,
+      'OTHERS': 0,
+    };
+
+    jobsByPeriodTypesCount.forEach((count) => {
+      byType[count._id] = Number(count.count);
+    });
+
+    const byStatus: JobsByStatus = {
+      'OPEN': 0,
+      'DONE': 0,
+    };
+
+    jobsByPeriodStatusCount.forEach((count) => {
+      byStatus[count._id] = Number(count.count);
+    });
+
+    const dashboardJobsData: DashboardJobsData = {
+      month,
+      year,
+      jobs: {
+        byType,
+        byStatus,
+      }
+    };
+
+    return dashboardJobsData;
   }
 
   async newJob(newJobDTO: NewJobDTO): Promise<JobDocument> {

@@ -17,7 +17,7 @@ export class BillsController {
   }
 
   @Get('/:id')
-  getPaymentById(@Param() mongoIdDTO: MongoIdDTO): Promise<BillDocument> {
+  getBillById(@Param() mongoIdDTO: MongoIdDTO): Promise<BillDocument> {
     return this.billsService.getBillById(mongoIdDTO.id);
   }
 
@@ -27,7 +27,7 @@ export class BillsController {
   }
 
   @Patch('/:id')
-  updatePayment(
+  updateBill(
     @Param() mongoIdDTO: MongoIdDTO,
     @Body() updateBillDTO: UpdateBillDTO,
   ): Promise<BillDocument> {
@@ -35,7 +35,7 @@ export class BillsController {
   }
 
   @Delete('/:id')
-  deletePayment(@Param() mongoIdDTO: MongoIdDTO): Promise<void> {
+  deleteBill(@Param() mongoIdDTO: MongoIdDTO): Promise<void> {
     return this.billsService.deleteBill(mongoIdDTO);
   }
 
