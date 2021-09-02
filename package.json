@@ -1,8 +1,8 @@
 {
-  "name": "serelep-proto",
+  "name": "serelep-nest",
   "version": "0.0.1",
-  "description": "",
-  "author": "",
+  "description": "Prototype of Serelep API",
+  "author": "Victor Meireles",
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
@@ -33,6 +33,7 @@
     "bcrypt": "^5.0.1",
     "class-transformer": "^0.4.0",
     "class-validator": "^0.13.1",
+    "helmet": "^4.6.0",
     "lodash": "^4.17.21",
     "mongoose": "^6.0.2",
     "passport": "^0.4.1",
