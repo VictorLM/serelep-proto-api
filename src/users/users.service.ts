@@ -26,6 +26,11 @@ export class UsersService {
     return found;
   }
 
+  async getAuthUser(user: UserDocument): Promise<UserDocument> {
+    user.password = null;
+    return user;
+  }
+
   async getUserByEmail(email: string): Promise<UserDocument> {
     return await this.userModel.findOne({email});
   }
