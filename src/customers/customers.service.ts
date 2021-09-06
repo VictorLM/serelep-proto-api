@@ -22,9 +22,9 @@ export class CustomersService {
     }
 
     if (orderBy && orderBy === 'DESC') {
-      query.sort({ createdAt: -1 });
+      query.sort({ name: -1 });
     } else {
-      query.sort({ createdAt: 1 });
+      query.sort({ name: 1 });
     }
 
     return await query.exec();
