@@ -32,6 +32,11 @@ export class CreateCustomerDTO {
   @MinLength(3, { message: 'Responsável deve ter no mínimo $constraint1 caracteres' })
   @MaxLength(50, { message: 'Responsável deve ter no máximo $constraint1 caracteres' })
   readonly contact: string;
+
+  @IsOptional()
+  @IsString({ message: 'Anotação inválida' })
+  @MaxLength(255, { message: 'Anotação deve ter no máximo $constraint1 caracteres' })
+  readonly notes: string;
 }
 
 export class UpdateCustomerDTO extends CreateCustomerDTO {

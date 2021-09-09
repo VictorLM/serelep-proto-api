@@ -17,6 +17,9 @@ export class Customer {
   @Prop({ required: true })
   contact: string;
 
+  @Prop({ required: false, default: null })
+  notes: string;
+
   @Prop({
     required: false,
     nullable: true,

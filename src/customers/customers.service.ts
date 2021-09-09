@@ -43,9 +43,9 @@ export class CustomersService {
   }
 
   async createCustomer(createCustomerDTO: CreateCustomerDTO): Promise<CustomerDocument> {
-    const { name, doc, email, contact } = createCustomerDTO;
+    const { name, doc, email, contact, notes } = createCustomerDTO;
 
-    const newCustomer = new this.customerModel({ name, doc, email, contact });
+    const newCustomer = new this.customerModel({ name, doc, email, contact, notes });
 
     try {
       return await newCustomer.save();
@@ -60,13 +60,14 @@ export class CustomersService {
     mongoIdDTO: MongoIdDTO,
     updateCustomerDTO: UpdateCustomerDTO,
   ): Promise<CustomerDocument> {
-    const { name, doc, email, contact, disabled } = updateCustomerDTO;
+    const { name, doc, email, contact, notes, disabled } = updateCustomerDTO;
     const foundCustomer = await this.getCustomerById(mongoIdDTO.id);
 
     foundCustomer.name = name;
     foundCustomer.doc = doc;
     foundCustomer.email = email;
     foundCustomer.contact = contact;
+    foundCustomer.notes = notes;
     foundCustomer.disabled = disabled ? new Date() : null;
 
     try {
