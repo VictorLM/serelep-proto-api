@@ -50,7 +50,7 @@ export class JobsService {
     if (orderBy && orderBy === 'DESC') {
       query.sort({ createdAt: -1 });
     } else {
-      query.sort({ createdAt: -1 });
+      query.sort({ createdAt: 1 });
     }
 
     return await query.exec();
