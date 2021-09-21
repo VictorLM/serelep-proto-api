@@ -75,7 +75,7 @@ export class JobsService {
     if (!Types.ObjectId.isValid(id)) {
       throw new BadRequestException(`ID "${id}" inválido`);
     }
-    const foundJob = await this.jobModel.findById(id).populate('customer payments');
+    const foundJob = await this.jobModel.findById(id).populate('customer').populate({ path: 'payments', options: { sort: ['dueDate'] } });
 
     if (!foundJob) {
       throw new NotFoundException(`Job com ID "${id}" não encontrado`);
