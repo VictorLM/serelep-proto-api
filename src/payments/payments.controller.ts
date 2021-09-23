@@ -1,7 +1,7 @@
-import { Body, Controller, Delete, Get, Param, Patch, Query, UseGuards, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UseGuards, ValidationPipe } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { MongoIdDTO } from '../globals/dto/mongoId.dto';
-import { UpdatePaymentDTO } from './dto/payment.dto';
+import { PaymentDTO, UpdatePaymentDTO } from './dto/payment.dto';
 import { PaymentsQueryDTO } from './dto/payments-query.dto';
 import { PaymentDocument } from './model/payment.schema';
 import { PaymentsService } from './payments.service';
@@ -22,6 +22,14 @@ export class PaymentsController {
   getPaymentById(@Param() mongoIdDTO: MongoIdDTO): Promise<PaymentDocument> {
     return this.paymentsService.getPaymentById(mongoIdDTO.id);
   }
+
+  // @Post('/')
+  // createPayment(
+  //   @Body() paymentDTO: PaymentDTO,
+  //   @Body() jobID: MongoIdDTO,
+  // ): Promise<PaymentDocument> {
+  //   return this.paymentsService.createPayment(paymentDTO, jobID.id);
+  // }
 
   @Patch('/:id')
   updatePayment(

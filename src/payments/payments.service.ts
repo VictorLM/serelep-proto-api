@@ -32,9 +32,9 @@ export class PaymentsService {
     }
 
     if (orderBy && orderBy === 'DESC') {
-      query.sort({ createdAt: -1 });
+      query.sort({ dueDate: -1 });
     } else {
-      query.sort({ createdAt: -1 });
+      query.sort({ dueDate: 1 });
     }
 
     return await query.exec();
@@ -79,6 +79,7 @@ export class PaymentsService {
     jobID: Types.ObjectId,
   ): Promise<PaymentDocument> {
     const { value, dueDate, notes } = paymentDTO;
+
     const newPaymemt = new this.paymentModel({ job: jobID, value, dueDate, notes });
 
     try {
@@ -89,6 +90,28 @@ export class PaymentsService {
       throw new InternalServerErrorException('Erro ao cadastrar novo Pagamento. Por favor, tente novamente mais tarde');
     }
   }
+
+  // async createSoloPayment(
+  //   paymentDTO: PaymentDTO,
+  //   jobID: Types.ObjectId,
+  // ): Promise<void> {
+  //   const { value, dueDate, notes } = paymentDTO;
+
+  //   const foundJob = await this.jobsService.getJobById(jobID);
+
+  //   const newPaymemt = new this.paymentModel({ job: jobID, value, dueDate, notes });
+
+  //   foundJob.payments = [...foundJob.payments, newPaymemt];
+  //   newPaymemt.save();
+
+  //   try {
+  //     foundJob.save();
+
+  //   } catch (error) {
+  //     console.log(error);
+  //     throw new InternalServerErrorException('Erro ao cadastrar novo Pagamento. Por favor, tente novamente mais tarde');
+  //   }
+  // }
 
   async createPayments(
     paymentsDTO: PaymentDTO[],
