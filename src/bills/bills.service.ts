@@ -29,7 +29,7 @@ export class BillsService {
   // TODO - Quando alterar valor de uma despesas fixa, vai alterar os valores das métricas dos meses anteriores
 
   async getBills(billQueryDTO: BillQueryDTO): Promise<BillDocument[]> {
-    const { type, subType, payed, search, orderBy } = billQueryDTO || {};
+    const { type, subType, payed, overdue, search, orderBy } = billQueryDTO || {};
     const query = this.billModel.find().populate('job');
 
     if (type) {
@@ -40,20 +40,23 @@ export class BillsService {
       query.where('subType', BillSubTypes[subType]);
     }
 
-    if (payed !== undefined && payed) {
-      query.where({ payed: { $ne: null } });
-    } else if (payed !== undefined && !payed) {
+    if (overdue) {
+      query.where({
+        dueDate: { $lt: new Date(Date.now()) }
+      });
       query.where({ payed: null });
+    } else if(payed) {
+      query.where({ payed: { $ne: null } });
     }
 
     if (search) {
       query.where({ name: { $regex: '.*' + search + '.*' } });
     }
 
-    if (orderBy && orderBy === 'DESC') {
-      query.sort({ createdAt: -1 });
+    if (orderBy && orderBy === 'ASC') {
+      query.sort({ dueDate: 1 });
     } else {
-      query.sort({ createdAt: -1 });
+      query.sort({ dueDate: -1 });
     }
 
     return await query.exec();
