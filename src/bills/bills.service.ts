@@ -146,7 +146,7 @@ export class BillsService {
     const { name, type, subType, value, dueDate, job, notes, payed } = updateBillDTO;
     const foundBill = await this.getBillById(mongoIdDTO.id);
 
-    if(type === BillTypes.VARIABLE && job && foundBill.job._id !== job) {
+    if(type === BillTypes.VARIABLE && job && get(foundBill, 'job._id', null) !== job) {
       const foundJob = await this.jobsService.getJobById(job);
       foundBill.job = foundJob;
     } else {
