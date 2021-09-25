@@ -28,7 +28,7 @@ export class AuthService {
 
       response.cookie('access_token', accessToken, {
         httpOnly: true,
-        // domain: this.configService.get('APP_FRONT_DOMAIN'),
+        domain: this.configService.get('APP_FRONT_DOMAIN'),
         expires: new Date(Date.now() + 1000 * 60 * 60 * 12), // 12 hours
       });
 
