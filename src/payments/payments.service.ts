@@ -28,7 +28,7 @@ export class PaymentsService {
     }
 
     if (search) {
-      query.where({ notes: { $regex: '.*' + search + '.*' } });
+      query.where({ notes: { $regex: '.*' + search + '.*', $options: 'i' } });
     }
 
     if (orderBy && orderBy === 'DESC') {

@@ -18,7 +18,7 @@ export class CustomersService {
     const query = this.customerModel.find({ disabled: null });
 
     if (search) {
-      query.where({ name: { $regex: '.*' + search + '.*' } });
+      query.where({ name: { $regex: '.*' + search + '.*', $options: 'i' } });
     }
 
     if (orderBy && orderBy === 'DESC') {

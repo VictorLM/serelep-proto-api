@@ -44,7 +44,7 @@ export class JobsService {
     }
 
     if (search) {
-      query.where({ name: { $regex: '.*' + search + '.*' } });
+      query.where({ name: { $regex: '.*' + search + '.*', $options: 'i' } });
     }
 
     if (orderBy && orderBy === 'DESC') {

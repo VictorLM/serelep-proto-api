@@ -59,7 +59,7 @@ export class AppService {
     const dateYear = new Date(period.year, period.month);
     const dashboardChartData: DashboardValuesData[] = [];
 
-    for(let i = 0; i < 12; i = i + 1) { // 12 meses
+    for(let i = 0; i < 6; i = i + 1) { // 6 meses
       // Adicionando +1 ao mês porque os meses começam no 0, mas não para a função que está sendo chamada
       dashboardChartData.push(await this.getDashboardValuesData({
         month: new Date(dateMonth.setMonth(dateMonth.getMonth() - 1)).getMonth() + 1,

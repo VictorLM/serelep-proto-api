@@ -50,7 +50,7 @@ export class BillsService {
     }
 
     if (search) {
-      query.where({ name: { $regex: '.*' + search + '.*' } });
+      query.where({ name: { $regex: '.*' + search + '.*', $options: 'i' } });
     }
 
     if (orderBy && orderBy === 'ASC') {
