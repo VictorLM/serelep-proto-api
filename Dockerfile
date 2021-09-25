@@ -1,7 +1,24 @@
-FROM node:16.0-alpine
+FROM node:16.0-alpine As development
 
-WORKDIR /app
+WORKDIR /usr/src/app
+
+COPY package*.json ./
+
+RUN npm install --only=development
 
 COPY . .
 
-CMD ["npm", "start:prod"]
+RUN npm run build
+
+FROM node:16.0-alpine as production
+
+ARG NODE_ENV=production
+ENV NODE_ENV=${NODE_ENV}
+
+WORKDIR /usr/src/app
+
+COPY package*.json ./
+
+RUN npm install --only=production
+
+COPY . .
