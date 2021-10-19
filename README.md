@@ -46,6 +46,7 @@
 
 <p>
   Made with ❤️ by <b>Victor Meireles</b> 👋🏽 Get in touch!
+  <br/>
   Feito com ❤️ por <b>Victor Meireles</b> 👋🏽 Entre em contato!
 </p>
 
