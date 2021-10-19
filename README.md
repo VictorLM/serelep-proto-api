@@ -9,7 +9,7 @@
 </h1>
 
 <p>
-  Esse projeto é o back-end (API). Veja o front-end <a href="https://github.com/VictorLM/serelep-proto-react" target="_blank">aqui.</a>
+  Esse projeto é o back-end (API). Veja o front-end (UI) <a href="https://github.com/VictorLM/serelep-proto-react" target="_blank">aqui.</a>
 </p>
 
 <h1 id="descricao">Descrição</h1>
@@ -28,13 +28,13 @@
    * [Autor](#autor)
 <!--te-->
 
-<h1 align="center" id="preview">Preview</h1>
+<h1 id="preview">Preview</h1>
 
 <p align="center">
   <img src="https://i.ibb.co/K7YYBBn/AVINCER.png" alt="Avincer" />
 </p>
 
-<h1 align="center" id="tecnologias">Tecnologias</h1>
+<h1 id="tecnologias">Tecnologias</h1>
 
 <p>
     As seguintes ferramentas foram usadas na construção deste projeto:
@@ -46,7 +46,7 @@
 - [MongoDB](https://www.mongodb.com/)
 - [Mongoose](https://mongoosejs.com/)
 
-<h1 align="center" id="autor">Autor</h1>
+<h1 id="autor">Autor</h1>
 
 <p>
   Made with ❤️ by <b>Victor Meireles</b> 👋🏽 Get in touch!
