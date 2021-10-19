@@ -1,73 +1,54 @@
 <p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo_text.svg" width="320" alt="Nest Logo" /></a>
+  <a href="https://app.avincerstudio.com/" target="_blank">
+    <img src="https://app.avincerstudio.com/images/logo_black.png" alt="Avincer" />
+  </a>
 </p>
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+<h1 align="center" style="border-bottom: none">
+  <a href="https://app.avincerstudio.com/" target="_blank">Controle Financeiro - Avincer Studio</a>
+</h1>
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
+<h1 id="descricao">Descrição</h1>
+
+<p>
+  Controle financeiro / ERP para profissionais do mercado criativo. Essa aplicação é um protótipo do sistema ERP Serelep, idealizado pelo designer brasileiro Jonathan Santos. Todos os direitos reservados.
 </p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
 
-## Description
+<h1 id="tabela-de-conteudo">Tabela de conteúdos</h1>
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+<!--ts-->
+   * [Tabela de Conteúdo](#tabela-de-conteudo)
+   * [Descrição](#descricao)
+   * [Preview](#preview)
+   * [Tecnologias](#tecnologias)
+   * [Autor](#autor)
+<!--te-->
 
-## Installation
+<h1 align="center" id="preview">Preview</h1>
 
-```bash
-$ npm install
-```
+<p align="center">
+  <img src="https://i.ibb.co/K7YYBBn/AVINCER.png" alt="Avincer" />
+</p>
 
-## Running the app
+<h1 align="center" id="tecnologias">Tecnologias</h1>
 
-```bash
-# development
-$ npm run start
+<p>
+    As seguintes ferramentas foram usadas na construção deste projeto:
+</p>
 
-# watch mode
-$ npm run start:dev
+- [Node.js](https://nodejs.org/en/)
+- [TypeScript](https://www.typescriptlang.org/)
+- [NestJS](https://nestjs.com/)
+- [MongoDB](https://www.mongodb.com/)
+- [Mongoose](https://mongoosejs.com/)
 
-# production mode
-$ npm run start:prod
-```
+<h1 align="center" id="autor">Autor</h1>
 
-## Test
+<p>
+  Made with ❤️ by <b>Victor Meireles</b> 👋🏽 Get in touch!
+  Feito com ❤️ por <b>Victor Meireles</b> 👋🏽 Entre em contato!
+</p>
 
-```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
-```
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](LICENSE).
+[![Github Badge](https://img.shields.io/badge/-Github-000?style=flat-square&logo=Github&logoColor=white&link=https://github.com/VictorLM)](https://github.com/VictorLM)
+[![Linkedin Badge](https://img.shields.io/badge/-LinkedIn-blue?style=flat-square&logo=Linkedin&logoColor=white&link=https://www.linkedin.com/in/victorlucasmeireles/)](https://www.linkedin.com/in/victorlucasmeireles/)
+[![Gmail Badge](https://img.shields.io/badge/-Email-c14438?style=flat-square&logo=Gmail&logoColor=white&link=mailto:victor.meireles.dev@gmail.com)](mailto:victor.meireles.dev@gmail.com)
